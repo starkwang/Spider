@@ -1,26 +1,25 @@
-var Spider = require('./src/Spider');
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express')
+const bodyParser = require('body-parser')
+const http = require('http')
+const Spider = require('./dist/Spider')
 
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-io.on('connection', function(socket) {
-    socket.on('fetch start', function(data) {
-        Spider(data.url, socket);
-    });
-});
-server.listen(3001);
+const app = express()
+const server = http.createServer(app)
+const io = require('socket.io')(server)
 
+app.use(bodyParser())
+app.use(express.static('./client'))
 
-app.use(bodyParser());// WARNING
-app.use('/js', express.static('./client/build'));
-app.use('/css', express.static('./client/build'));
+app.get('/', (req, res) => {
+	res.sendFile(__dirname + '/client/index.html')
+})
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/client/index.html');
-});
+io.on('connection', socket => {
+  socket.on('fetch start', data => {
+    Spider(data.url, socket)
+  })
+})
 
-app.listen(3000,function(){
-	console.log('server start at 127.0.0.1:%s',this.address().port)
-});
+server.listen(3001)
+
+app.listen(8080)
