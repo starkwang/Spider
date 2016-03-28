@@ -1,50 +1,51 @@
-var fetchFollwerOrFollwee = require('./fetchFollwerOrFollwee');
-var getUser = require('./getUser');
-var Promise = require('bluebird');
-var config = require('../config');
-module.exports = Spider;
+import fetchFollwerOrFollwee from './fetchFollwerOrFollwee';
+import getUser from './getUser';
+import config from '../config';
+import co from 'co';
+import 'babel-polyfill';
+import Promise from 'bluebird';
 
-function Spider(userPageUrl, socket) {
-    socket.emit('notice', '抓取用户信息......');
-    return getUser(userPageUrl)
-        .then(function(user) {
-            socket.emit('notice', '抓取用户信息成功');
-            socket.emit('get user', user);
-            return getFriends(user, socket);
-        })
-        .then(function(myFriends) {
-            return Promise.map(myFriends, function(myFriend) {
-                return getUser(myFriend.url);
-            }, { concurrency: config.concurrency ? config.concurrency : 3 });
-        })
-        .then(function(myFriends) {
-            var input = [];
-            myFriends.forEach(function(friend) {
-                input.push({
-                    "user": friend,
-                    "sameFriends": []
-                })
-            });
-            socket.emit('data', input);
+function* SpiderMain(userPageUrl, socket) {
+    try {
+        var user = yield getUser(userPageUrl);
+        socket.emit('notice', '抓取用户信息成功');
+        socket.emit('get user', user);
 
-            console.log(myFriends);
-            return Promise.map(myFriends, function(myFriend) {
-                return searchSameFriend(myFriend, myFriends, socket);
-            }, { concurrency: config.concurrency ? config.concurrency : 3 });
-        })
-        .then(function(result) {
-            var data = result;
-            socket.emit('data', data);
+        var myFriendsTmp = yield getFriends(user, socket);
 
-        })
-        .catch(function(err) {
-            console.log(err);
-        })
+        var myFriends = yield Promise.map(myFriendsTmp,
+            myFriend => getUser(myFriend.url), 
+            { concurrency: config.concurrency ? config.concurrency : 3 }
+        )
+
+        var input = myFriends.map(friend => ({
+            "user": friend,
+            "sameFriends": []
+        }));
+        socket.emit('data', input);
+
+        var result = yield Promise.map(myFriends,
+            myFriend => searchSameFriend(myFriend, myFriends, socket), 
+            { concurrency: config.concurrency ? config.concurrency : 3 }
+        );
+        socket.emit('data', result);
+    } catch (err) {
+        console.log(err);
+    }
+
+}
+
+export function Spider(userPageUrl, socket) {
+    co(SpiderMain(userPageUrl, socket));
 }
 
 
-
 function getFriends(user, socket) {
+    if (!socket) {
+        var socket = {
+            emit: () => {}
+        }
+    }
     var works = [fetchFollwerOrFollwee({
         isFollowees: true,
         user: user
@@ -67,6 +68,11 @@ function getFriends(user, socket) {
 }
 
 function searchSameFriend(aFriend, myFriends, socket) {
+    if (!socket) {
+        var socket = {
+            emit: () => {}
+        }
+    }
     socket.emit("notice", "searchSameFriend with " + aFriend.name + "......");
     console.log("searchSameFriend with " + aFriend.name + "......");
     return getFriends(aFriend, socket)

@@ -1,7 +1,7 @@
-var Spider = require('./src/Spider');
+var Spider = require('./build/Spider').Spider;
 var express = require('express');
 var bodyParser = require('body-parser');
-
+console.log(Spider);
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
