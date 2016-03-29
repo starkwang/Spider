@@ -31,6 +31,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _marked = [SpiderMain].map(regeneratorRuntime.mark);
 
+function Spider(userPageUrl, socket) {
+    (0, _co2.default)(SpiderMain(userPageUrl, socket));
+}
+
 function SpiderMain(userPageUrl, socket) {
     var user, myFriendsTmp, myFriends, input, result;
     return regeneratorRuntime.wrap(function SpiderMain$(_context) {
@@ -90,10 +94,6 @@ function SpiderMain(userPageUrl, socket) {
                 return _context.stop();
         }
     }, _marked[0], this, [[0, 20]]);
-}
-
-function Spider(userPageUrl, socket) {
-    (0, _co2.default)(SpiderMain(userPageUrl, socket));
 }
 
 function getFriends(user, socket) {

@@ -5,6 +5,11 @@ import co from 'co';
 import 'babel-polyfill';
 import Promise from 'bluebird';
 
+export function Spider(userPageUrl, socket) {
+    co(SpiderMain(userPageUrl, socket));
+}
+
+
 function* SpiderMain(userPageUrl, socket) {
     try {
         var user = yield getUser(userPageUrl);
@@ -35,10 +40,6 @@ function* SpiderMain(userPageUrl, socket) {
 
 }
 
-export function Spider(userPageUrl, socket) {
-    co(SpiderMain(userPageUrl, socket));
-}
-
 
 function getFriends(user, socket) {
     if (!socket) {
@@ -52,7 +53,7 @@ function getFriends(user, socket) {
     }, socket), fetchFollwerOrFollwee({
         user: user
     }, socket)];
-    return Promise.all(works).then(function(result) {
+    return Promise.all(works).then(result => {
         var followees = result[0];
         var followers = result[1];
         var friends = [];
@@ -76,11 +77,11 @@ function searchSameFriend(aFriend, myFriends, socket) {
     socket.emit("notice", "searchSameFriend with " + aFriend.name + "......");
     console.log("searchSameFriend with " + aFriend.name + "......");
     return getFriends(aFriend, socket)
-        .then(function(targetFriends) {
+        .then(targetFriends => {
             var sameFriends = [];
             console.log('counting for ' + aFriend.name + '......')
-            targetFriends.forEach(function(targetFriend) {
-                myFriends.forEach(function(myFriend) {
+            targetFriends.forEach(targetFriend => {
+                myFriends.forEach(myFriend => {
                     if (targetFriend.hash_id === myFriend.hash_id) {
                         sameFriends.push(targetFriend);
                     }

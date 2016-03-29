@@ -1,16 +1,31 @@
 'use strict';
 
-var request = require('request');
-var Promise = require('bluebird');
-var config = require('../config');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getUser;
+
+var _request = require('request');
+
+var _request2 = _interopRequireDefault(_request);
+
+var _bluebird = require('bluebird');
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getUser(userPageUrl) {
-    return new Promise(function (resolve, reject) {
-        request({
+    return new _bluebird2.default(function (resolve, reject) {
+        (0, _request2.default)({
             method: 'GET',
             url: userPageUrl,
             headers: {
-                'cookie': config.cookie
+                'cookie': _config2.default.cookie
             }
         }, function (err, res, body) {
             if (err) {
@@ -43,5 +58,3 @@ function parse(html) {
     user.name = RegExp.$1;
     return user;
 }
-
-module.exports = getUser;

@@ -1,10 +1,29 @@
 'use strict';
 
-var request = require('request');
-var Promise = require('bluebird');
-var config = require('../config');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = fetchFollwerOrFollwee;
 
-var fetchFollwerOrFollwee = function fetchFollwerOrFollwee(options, socket) {
+var _request = require('request');
+
+var _request2 = _interopRequireDefault(_request);
+
+var _bluebird = require('bluebird');
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
+
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function fetchFollwerOrFollwee(options, socket) {
     var user = options.user;
     var isFollowees = options.isFollowees;
     var grounpAmount = isFollowees ? Math.ceil(user.followeeAmount / 20) : Math.ceil(user.followerAmount / 20);
@@ -12,33 +31,28 @@ var fetchFollwerOrFollwee = function fetchFollwerOrFollwee(options, socket) {
     for (var i = 0; i < grounpAmount; i++) {
         offsets.push(i * 20);
     }
-    return Promise.map(offsets, function (offset) {
+    return _bluebird2.default.map(offsets, function (offset) {
         return getFollwerOrFollwee(user, offset, isFollowees, socket);
-    }, { concurrency: config.concurrency ? config.concurrency : 3 }).then(function (array) {
-        var result = [];
-        array.forEach(function (item) {
-            result = result.concat(item);
-        });
-        return result;
+    }, { concurrency: _config2.default.concurrency ? _config2.default.concurrency : 3 }).then(function (array) {
+        return _lodash2.default.flatten(array);
     });
-};
+}
 
 function getFollwerOrFollwee(user, offset, isFollowees, socket) {
     socket.emit('notice', '开始抓取 ' + user.name + ' 的第 ' + offset + '-' + (offset + 20) + ' 位' + (isFollowees ? '关注的人' : '关注者'));
     console.log('开始抓取 ' + user.name + ' 的第 ' + offset + '-' + (offset + 20) + ' 位' + (isFollowees ? '关注的人' : '关注者'));
     var params = "{\"offset\":{{counter}},\"order_by\":\"created\",\"hash_id\":\"{{hash_id}}\"}".replace(/{{counter}}/, offset).replace(/{{hash_id}}/, user.hash_id);
-    // console.log(params);
-    return new Promise(function (resolve, reject) {
-        request({
+    return new _bluebird2.default(function (resolve, reject) {
+        (0, _request2.default)({
             method: 'POST',
             url: isFollowees ? 'https://www.zhihu.com/node/ProfileFolloweesListV2' : 'https://www.zhihu.com/node/ProfileFollowersListV2',
             form: {
                 method: "next",
                 params: params,
-                _xsrf: config._xsrf
+                _xsrf: _config2.default._xsrf
             },
             headers: {
-                'cookie': config.cookie,
+                'cookie': _config2.default.cookie,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'cache-control': 'no-cache',
                 'x-requested-with': 'XMLHttpRequest'
@@ -88,5 +102,3 @@ function consoleLog(x) {
     console.log(x);
     return x;
 }
-
-module.exports = fetchFollwerOrFollwee;

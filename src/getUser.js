@@ -1,16 +1,16 @@
-var request = require('request');
-var Promise = require('bluebird');
-var config = require('../config');
+import request from 'request';
+import Promise from 'bluebird';
+import config from '../config';
 
-function getUser(userPageUrl) {
-    return new Promise(function(resolve, reject) {
+export default function getUser(userPageUrl) {
+    return new Promise((resolve, reject) => {
         request({
             method: 'GET',
             url: userPageUrl,
             headers: {
                 'cookie': config.cookie
             }
-        }, function(err, res, body) {
+        }, (err, res, body) => {
             if (err) {
                 reject(err);
             } else {
@@ -41,5 +41,3 @@ function parse(html) {
     user.name = RegExp.$1;
     return user;
 }
-
-module.exports = getUser;
