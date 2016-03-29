@@ -12,28 +12,33 @@ export function Spider(userPageUrl, socket) {
 
 function* SpiderMain(userPageUrl, socket) {
     try {
+        //======抓取目标用户信息======//
         var user = yield getUser(userPageUrl);
         socket.emit('notice', '抓取用户信息成功');
         socket.emit('get user', user);
 
+
+        //======抓取目标用户好友列表======//
         var myFriendsTmp = yield getFriends(user, socket);
 
+
+        //======好友列表完善======//
         var myFriends = yield Promise.map(myFriendsTmp,
             myFriend => getUser(myFriend.url), 
             { concurrency: config.concurrency ? config.concurrency : 3 }
         )
-
-        var input = myFriends.map(friend => ({
+        socket.emit('data', myFriends.map(friend => ({
             "user": friend,
             "sameFriends": []
-        }));
-        socket.emit('data', input);
+        })));
 
+        //======找出相同好友======//
         var result = yield Promise.map(myFriends,
             myFriend => searchSameFriend(myFriend, myFriends, socket), 
             { concurrency: config.concurrency ? config.concurrency : 3 }
         );
         socket.emit('data', result);
+
     } catch (err) {
         console.log(err);
     }

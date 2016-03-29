@@ -36,7 +36,7 @@ function Spider(userPageUrl, socket) {
 }
 
 function SpiderMain(userPageUrl, socket) {
-    var user, myFriendsTmp, myFriends, input, result;
+    var user, myFriendsTmp, myFriends, result;
     return regeneratorRuntime.wrap(function SpiderMain$(_context) {
         while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -50,6 +50,7 @@ function SpiderMain(userPageUrl, socket) {
                 socket.emit('notice', '抓取用户信息成功');
                 socket.emit('get user', user);
 
+                //======抓取目标用户好友列表======//
                 _context.next = 8;
                 return getFriends(user, socket);
 
@@ -62,38 +63,39 @@ function SpiderMain(userPageUrl, socket) {
 
             case 11:
                 myFriends = _context.sent;
-                input = myFriends.map(function (friend) {
+
+                socket.emit('data', myFriends.map(function (friend) {
                     return {
                         "user": friend,
                         "sameFriends": []
                     };
-                });
+                }));
 
-                socket.emit('data', input);
-
-                _context.next = 16;
+                //======找出相同好友======//
+                _context.next = 15;
                 return _bluebird2.default.map(myFriends, function (myFriend) {
                     return searchSameFriend(myFriend, myFriends, socket);
                 }, { concurrency: _config2.default.concurrency ? _config2.default.concurrency : 3 });
 
-            case 16:
+            case 15:
                 result = _context.sent;
 
                 socket.emit('data', result);
-                _context.next = 23;
+
+                _context.next = 22;
                 break;
 
-            case 20:
-                _context.prev = 20;
+            case 19:
+                _context.prev = 19;
                 _context.t0 = _context['catch'](0);
 
                 console.log(_context.t0);
 
-            case 23:
+            case 22:
             case 'end':
                 return _context.stop();
         }
-    }, _marked[0], this, [[0, 20]]);
+    }, _marked[0], this, [[0, 19]]);
 }
 
 function getFriends(user, socket) {
