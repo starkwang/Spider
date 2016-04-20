@@ -14,6 +14,7 @@ var gulp = require('gulp'),
 var webpack = require('gulp-webpack');
 var webpackConfig = require('./webpack.config');
 gulp.task('default', ['clean', 'watch', 'sass:watch', 'sass', 'webpack']);
+gulp.task('build', ['clean', 'sass', 'webpack']);
 
 gulp.task("webpack", function() {
     return gulp

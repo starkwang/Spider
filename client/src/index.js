@@ -1,5 +1,6 @@
 var echarts = require('echarts');
-var socket = require('socket.io-client')('http://localhost:3001');
+var serverConfig = require('../../server.config');
+var socket = require('socket.io-client')(`http://localhost:${serverConfig.socketPort}`);
 var $ = require('jquery');
 var myChart = echarts.init(document.getElementById('main'));
 var echartParser = require('./echartParser');

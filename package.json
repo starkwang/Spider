@@ -21,7 +21,9 @@
     "gulp-concat": "^2.6.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index",
+    "install": "npm install;cd client;npm install",
+    "test": "gulp babel;cd client;gulp build"
   },
   "author": "",
   "license": "ISC"
