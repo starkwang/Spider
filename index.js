@@ -4,12 +4,13 @@ var bodyParser = require('body-parser');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var serverConfig = require('./server.config');
 io.on('connection', function(socket) {
     socket.on('fetch start', function(data) {
         Spider(data.url, socket);
     });
 });
-server.listen(3001);
+server.listen(serverConfig.socketPort);
 
 
 app.use(bodyParser());// WARNING
@@ -20,6 +21,6 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 
-app.listen(3000,function(){
+app.listen(serverConfig.httpPort,function(){
 	console.log('server start at 127.0.0.1:%s',this.address().port)
 });

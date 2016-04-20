@@ -1,6 +1,6 @@
 import request from 'request';
 import Promise from 'bluebird';
-import config from '../config';
+import config from '../spider.config';
 
 export default function getUser(userPageUrl) {
     return new Promise((resolve, reject) => {

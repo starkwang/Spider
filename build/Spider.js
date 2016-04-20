@@ -13,9 +13,9 @@ var _getUser = require('./getUser');
 
 var _getUser2 = _interopRequireDefault(_getUser);
 
-var _config = require('../config');
+var _spider = require('../spider.config');
 
-var _config2 = _interopRequireDefault(_config);
+var _spider2 = _interopRequireDefault(_spider);
 
 var _co = require('co');
 
@@ -38,62 +38,64 @@ function Spider(userPageUrl, socket) {
 function SpiderMain(userPageUrl, socket) {
     var user, myFriendsTmp, myFriends, result;
     return regeneratorRuntime.wrap(function SpiderMain$(_context) {
-        while (1) switch (_context.prev = _context.next) {
-            case 0:
-                _context.prev = 0;
-                _context.next = 3;
-                return (0, _getUser2.default)(userPageUrl);
+        while (1) {
+            switch (_context.prev = _context.next) {
+                case 0:
+                    _context.prev = 0;
+                    _context.next = 3;
+                    return (0, _getUser2.default)(userPageUrl);
 
-            case 3:
-                user = _context.sent;
+                case 3:
+                    user = _context.sent;
 
-                socket.emit('notice', '抓取用户信息成功');
-                socket.emit('get user', user);
+                    socket.emit('notice', '抓取用户信息成功');
+                    socket.emit('get user', user);
 
-                //======抓取目标用户好友列表======//
-                _context.next = 8;
-                return getFriends(user, socket);
+                    //======抓取目标用户好友列表======//
+                    _context.next = 8;
+                    return getFriends(user, socket);
 
-            case 8:
-                myFriendsTmp = _context.sent;
-                _context.next = 11;
-                return _bluebird2.default.map(myFriendsTmp, function (myFriend) {
-                    return (0, _getUser2.default)(myFriend.url);
-                }, { concurrency: _config2.default.concurrency ? _config2.default.concurrency : 3 });
+                case 8:
+                    myFriendsTmp = _context.sent;
+                    _context.next = 11;
+                    return _bluebird2.default.map(myFriendsTmp, function (myFriend) {
+                        return (0, _getUser2.default)(myFriend.url);
+                    }, { concurrency: _spider2.default.concurrency ? _spider2.default.concurrency : 3 });
 
-            case 11:
-                myFriends = _context.sent;
+                case 11:
+                    myFriends = _context.sent;
 
-                socket.emit('data', myFriends.map(function (friend) {
-                    return {
-                        "user": friend,
-                        "sameFriends": []
-                    };
-                }));
+                    socket.emit('data', myFriends.map(function (friend) {
+                        return {
+                            "user": friend,
+                            "sameFriends": []
+                        };
+                    }));
 
-                //======找出相同好友======//
-                _context.next = 15;
-                return _bluebird2.default.map(myFriends, function (myFriend) {
-                    return searchSameFriend(myFriend, myFriends, socket);
-                }, { concurrency: _config2.default.concurrency ? _config2.default.concurrency : 3 });
+                    //======找出相同好友======//
+                    _context.next = 15;
+                    return _bluebird2.default.map(myFriends, function (myFriend) {
+                        return searchSameFriend(myFriend, myFriends, socket);
+                    }, { concurrency: _spider2.default.concurrency ? _spider2.default.concurrency : 3 });
 
-            case 15:
-                result = _context.sent;
+                case 15:
+                    result = _context.sent;
 
-                socket.emit('data', result);
+                    socket.emit('data', result);
 
-                _context.next = 22;
-                break;
+                    _context.next = 22;
+                    break;
 
-            case 19:
-                _context.prev = 19;
-                _context.t0 = _context['catch'](0);
+                case 19:
+                    _context.prev = 19;
+                    _context.t0 = _context['catch'](0);
 
-                console.log(_context.t0);
+                    console.log(_context.t0);
 
-            case 22:
-            case 'end':
-                return _context.stop();
+                case 22:
+                case 'end':
+                    return _context.stop();
+            }
         }
     }, _marked[0], this, [[0, 19]]);
 }

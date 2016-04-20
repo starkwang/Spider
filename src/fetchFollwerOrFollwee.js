@@ -1,6 +1,6 @@
 import request from 'request';
 import Promise from 'bluebird';
-import config from '../config';
+import config from '../spider.config';
 import _ from 'lodash';
 
 export default function fetchFollwerOrFollwee(options, socket) {
@@ -11,8 +11,8 @@ export default function fetchFollwerOrFollwee(options, socket) {
     for (var i = 0; i < grounpAmount; i++) {
         offsets.push(i * 20);
     }
-    return Promise.map(offsets, 
-        offset => getFollwerOrFollwee(user, offset, isFollowees, socket), 
+    return Promise.map(offsets,
+        offset => getFollwerOrFollwee(user, offset, isFollowees, socket),
         { concurrency: config.concurrency ? config.concurrency : 3 }
     )
     .then(array => _.flatten(array))
