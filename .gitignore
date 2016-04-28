@@ -2,6 +2,7 @@ node_modules/
 
 # IDE
 .idea
+.vscode
 
 # config
 *config.js
