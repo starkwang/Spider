@@ -13,9 +13,9 @@ var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
-var _config = require('../config');
+var _spider = require('../spider.config');
 
-var _config2 = _interopRequireDefault(_config);
+var _spider2 = _interopRequireDefault(_spider);
 
 var _lodash = require('lodash');
 
@@ -33,7 +33,7 @@ function fetchFollwerOrFollwee(options, socket) {
     }
     return _bluebird2.default.map(offsets, function (offset) {
         return getFollwerOrFollwee(user, offset, isFollowees, socket);
-    }, { concurrency: _config2.default.concurrency ? _config2.default.concurrency : 3 }).then(function (array) {
+    }, { concurrency: _spider2.default.concurrency ? _spider2.default.concurrency : 3 }).then(function (array) {
         return _lodash2.default.flatten(array);
     });
 }
@@ -49,10 +49,10 @@ function getFollwerOrFollwee(user, offset, isFollowees, socket) {
             form: {
                 method: "next",
                 params: params,
-                _xsrf: _config2.default._xsrf
+                _xsrf: _spider2.default._xsrf
             },
             headers: {
-                'cookie': _config2.default.cookie,
+                'cookie': _spider2.default.cookie,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'cache-control': 'no-cache',
                 'x-requested-with': 'XMLHttpRequest'
