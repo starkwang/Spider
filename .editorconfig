@@ -1,0 +1,6 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# Indentation override for all JS 
+[*.js]
+indent_style = space
+indent_size = 4
