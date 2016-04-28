@@ -4,22 +4,40 @@
 
 ------
 #使用方法
+1、构建
+
 ```
 git clone https://github.com/starkwang/Spider.git && cd Spider
 
-npm install
+npm run init
 
-node index.js // Server runs at localhost:3000
+npm run build
+```
+
+2、配置
+
+参考`server.config.example.js`与`spider.config.example.js`，配置你自己的`server.config.js`与`spider.config.js`
+
+
+3、开始
+
+```
+npm run start // Server runs at localhost:3000
 ```
 ------
 #配置
-`config.js`
+1、`spider.config.js`
 
 - `cookie` [string]（必填项） : 自己在知乎上的cookie
 - `_xsrf` [string]（必填项）: 自己在知乎上的_xsrf
 - `concurrency` [number]（可选项）: 请求的并发数，默认为3
 
 **由于知乎的API较不稳定，concurrency并发数太大可能会造成卡死，在网络环境不好时建议设置为2或者1**
+
+2、`server.config.js`
+
+- `socketPort` [number]（必填项） : 用于websocket的端口号
+- `httpPort` [number]（必填项）: 用于http的端口号
 
 ------
 
