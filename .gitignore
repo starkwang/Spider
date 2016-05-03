@@ -2,6 +2,7 @@ node_modules/
 
 # IDE
 .idea
+.vscode
 
 # config
 *config.js
@@ -9,3 +10,7 @@ node_modules/
 
 #log
 *.log
+
+#build
+build/
+src/build/
