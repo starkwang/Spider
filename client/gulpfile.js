@@ -1,18 +1,13 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
-    jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
-    rename = require('gulp-rename'),
     clean = require('gulp-clean'),
-    concat = require('gulp-concat'),
-    notify = require('gulp-notify'),
-    cache = require('gulp-cache'),
-    connect = require('gulp-connect');;
+    concat = require('gulp-concat');
 
 var webpack = require('gulp-webpack');
 var webpackConfig = require('./webpack.config');
+
 gulp.task('default', ['clean', 'watch', 'sass:watch', 'sass', 'webpack']);
 gulp.task('build', ['clean', 'sass', 'webpack']);
 
