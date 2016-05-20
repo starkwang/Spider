@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.6.0",
+    "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.0",
@@ -24,7 +25,7 @@
   "scripts": {
     "start": "node index",
     "init": "npm install && cd client && npm install",
-    "build": "gulp babel;cd client;gulp build"
+    "build": "gulp babel && cd client && gulp build"
   },
   "author": "",
   "license": "ISC"
