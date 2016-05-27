@@ -4,14 +4,12 @@
 
 ------
 #使用方法
-1、构建
+1、初始化
 
 ```
 git clone https://github.com/starkwang/Spider.git && cd Spider
 
 npm run init
-
-npm run build
 ```
 
 2、配置
@@ -19,9 +17,11 @@ npm run build
 参考`server.config.example.js`与`spider.config.example.js`，配置你自己的`server.config.js`与`spider.config.js`
 
 
-3、开始
+3、构建并开始
 
 ```
+npm run build
+
 npm run start // Server runs at localhost:3000
 ```
 ------
