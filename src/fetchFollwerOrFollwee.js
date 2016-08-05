@@ -12,14 +12,13 @@ export default function fetchFollwerOrFollwee(options, socket) {
         offsets.push(i * 20);
     }
     return Promise.map(offsets,
-        offset => getFollwerOrFollwee(user, offset, isFollowees, socket),
-        { concurrency: config.concurrency ? config.concurrency : 3 }
+        offset => getFollwerOrFollwee(user, offset, isFollowees, socket), { concurrency: config.concurrency ? config.concurrency : 3 }
     )
-    .then(array => _.flatten(array))
+        .then(array => _.flatten(array))
 }
 
 function getFollwerOrFollwee(user, offset, isFollowees, socket) {
-    socket.emit('notice','开始抓取 ' + user.name + ' 的第 ' + offset + '-' + (offset + 20) + ' 位' + (isFollowees ? '关注的人' : '关注者'));
+    socket.emit('notice', '开始抓取 ' + user.name + ' 的第 ' + offset + '-' + (offset + 20) + ' 位' + (isFollowees ? '关注的人' : '关注者'));
     console.log('开始抓取 ' + user.name + ' 的第 ' + offset + '-' + (offset + 20) + ' 位' + (isFollowees ? '关注的人' : '关注者'));
     var params = "{\"offset\":{{counter}},\"order_by\":\"created\",\"hash_id\":\"{{hash_id}}\"}".replace(/{{counter}}/, offset).replace(/{{hash_id}}/, user.hash_id);
     return new Promise((resolve, reject) => {

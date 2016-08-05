@@ -24,8 +24,7 @@ function* SpiderMain(userPageUrl, socket) {
 
         //======好友列表完善======//
         var myFriends = yield Promise.map(myFriendsTmp,
-            myFriend => getUser(myFriend.url),
-            { concurrency: config.concurrency ? config.concurrency : 3 }
+            myFriend => getUser(myFriend.url), { concurrency: config.concurrency ? config.concurrency : 3 }
         )
         socket.emit('data', myFriends.map(friend => ({
             "user": friend,
@@ -34,8 +33,7 @@ function* SpiderMain(userPageUrl, socket) {
 
         //======找出相同好友======//
         var result = yield Promise.map(myFriends,
-            myFriend => searchSameFriend(myFriend, myFriends, socket),
-            { concurrency: config.concurrency ? config.concurrency : 3 }
+            myFriend => searchSameFriend(myFriend, myFriends, socket), { concurrency: config.concurrency ? config.concurrency : 3 }
         );
         socket.emit('data', result);
 
@@ -49,7 +47,7 @@ function* SpiderMain(userPageUrl, socket) {
 function getFriends(user, socket) {
     if (!socket) {
         var socket = {
-            emit: () => {}
+            emit: () => { }
         }
     }
     var works = [fetchFollwerOrFollwee({
@@ -62,8 +60,8 @@ function getFriends(user, socket) {
         var followees = result[0];
         var followers = result[1];
         var friends = [];
-        followers.forEach(function(follower) {
-            followees.forEach(function(followee) {
+        followers.forEach(function (follower) {
+            followees.forEach(function (followee) {
                 if (follower.hash_id === followee.hash_id) {
                     friends.push(follower);
                 }
@@ -76,7 +74,7 @@ function getFriends(user, socket) {
 function searchSameFriend(aFriend, myFriends, socket) {
     if (!socket) {
         var socket = {
-            emit: () => {}
+            emit: () => { }
         }
     }
     socket.emit("notice", "searchSameFriend with " + aFriend.name + "......");
